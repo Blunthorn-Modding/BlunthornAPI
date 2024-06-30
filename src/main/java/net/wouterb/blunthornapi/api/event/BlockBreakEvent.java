@@ -39,6 +39,11 @@ public interface BlockBreakEvent {
 
     ActionResult interact(BlockActionContext blockActionContext);
 
+    /**
+     * Calling this method triggers the event.
+     * @param blockActionContext the context of the action
+     * @return the ActionResult of the event.
+     */
     static ActionResult emit(Event<BlockBreakEvent> event, BlockActionContext blockActionContext) {
         return event.invoker().interact(blockActionContext);
     }

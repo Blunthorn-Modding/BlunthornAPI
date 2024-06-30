@@ -5,15 +5,15 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.util.ActionResult;
 import net.wouterb.blunthornapi.api.context.BlockActionContext;
 
-public interface BlockPlacementEvent {
+public interface BlockUseEvent {
     /**
-     * Called when the player places a block.
+     * Called when the player interacts with a block.
      */
-    Event<BlockPlacementEvent> EVENT = EventFactory.createArrayBacked(BlockPlacementEvent.class,
+    Event<BlockUseEvent> EVENT = EventFactory.createArrayBacked(BlockUseEvent.class,
             (listeners) -> (blockActionContext) -> {
                 if (blockActionContext.getPlayer().isSpectator()) return ActionResult.PASS;
 
-                for (BlockPlacementEvent listener : listeners) {
+                for (BlockUseEvent listener : listeners) {
                     ActionResult result = listener.interact(blockActionContext);
 
                     if (result != ActionResult.PASS) {
@@ -34,4 +34,3 @@ public interface BlockPlacementEvent {
         return EVENT.invoker().interact(blockActionContext);
     }
 }
-

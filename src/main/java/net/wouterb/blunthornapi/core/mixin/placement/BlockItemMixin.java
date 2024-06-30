@@ -20,9 +20,12 @@ public class BlockItemMixin {
     public void place(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> ci) {
         BlockActionContext blockActionContext = new BlockActionContext(context.getWorld(), context.getPlayer(), context.getBlockPos(), getBlockId(context.getWorld(), context.getBlockPos()));
         ActionResult result = BlockPlacementEvent.emit(blockActionContext);
-        ci.setReturnValue(result);
 
-        if (context.getPlayer() != null)
-            updateInventory(context.getPlayer());
+        if (result == ActionResult.FAIL) {
+            ci.setReturnValue(result);
+
+            if (context.getPlayer() != null)
+                updateInventory(context.getPlayer());
+        }
     }
 }

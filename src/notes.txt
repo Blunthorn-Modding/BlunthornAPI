@@ -1,0 +1,18 @@
+
+TODO:
+- Test out various placements of the updateInventory method
+- Test actions to find holes in the triggers
+- Permission system
+
+------------------------------------------------------------------------------------------------------------------------
+
+Things that aren't working:
+
+Item usage:
+    Axe stripping
+    Cow milking
+    Flint and steel
+    Shovel pathing
+    Hoeing ground
+    Shearing sheep
+    Equipping armor through inventory
