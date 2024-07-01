@@ -5,18 +5,21 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.util.ActionResult;
 import net.wouterb.blunthornapi.api.context.BlockActionContext;
 
-public interface BlockPlacementEvent {
+import static net.wouterb.blunthornapi.api.Util.updateInventory;
+
+public interface BlockPlaceEvent {
     /**
      * Called when the player places a block.
      */
-    Event<BlockPlacementEvent> EVENT = EventFactory.createArrayBacked(BlockPlacementEvent.class,
+    Event<BlockPlaceEvent> EVENT = EventFactory.createArrayBacked(BlockPlaceEvent.class,
             (listeners) -> (blockActionContext) -> {
                 if (blockActionContext.getPlayer().isSpectator()) return ActionResult.PASS;
 
-                for (BlockPlacementEvent listener : listeners) {
+                for (BlockPlaceEvent listener : listeners) {
                     ActionResult result = listener.interact(blockActionContext);
 
                     if (result != ActionResult.PASS) {
+                        updateInventory(blockActionContext.getServerPlayer());
                         return result;
                     }
                 }

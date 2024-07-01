@@ -2,8 +2,11 @@ package net.wouterb.blunthornapi.api.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
+
+import static net.wouterb.blunthornapi.api.Util.updateInventory;
 
 public interface ItemUseEvent {
     /**
@@ -15,6 +18,7 @@ public interface ItemUseEvent {
                     ActionResult result = listener.interact(itemActionContext);
 
                     if (result != ActionResult.PASS) {
+                        updateInventory(itemActionContext.getServerPlayer());
                         return result;
                     }
                 }
@@ -29,6 +33,16 @@ public interface ItemUseEvent {
      * @return the ActionResult of the event.
      */
     static ActionResult emit(ItemActionContext itemActionContext) {
+        return EVENT.invoker().interact(itemActionContext);
+    }
+
+    /**
+     * Calling this method triggers the event.
+     * @param context the context of the action
+     * @return the ActionResult of the event.
+     */
+    static ActionResult emit(ItemUsageContext context) {
+        ItemActionContext itemActionContext = new ItemActionContext(context.getWorld(), context.getPlayer(), context.getHand(), context.getStack());
         return EVENT.invoker().interact(itemActionContext);
     }
 }

@@ -6,6 +6,14 @@
     "crafting.CraftingScreenHandlerMixin",
     "crafting.SmithingScreenHandlerMixin",
     "drop.LivingEntityMixin",
+    "item.ArmorItemMixin",
+    "item.AxeItemMixin",
+    "item.EquipmentMixin",
+    "item.FlintAndSteelItemMixin",
+    "item.HoeItemMixin",
+    "item.ScreenHandlerMixin",
+    "item.ShovelItemMixin",
+    "item.TntBlockMixin",
     "placement.BlockItemMixin"
   ],
   "injectors": {

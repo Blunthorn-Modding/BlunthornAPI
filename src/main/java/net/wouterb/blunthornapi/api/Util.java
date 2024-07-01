@@ -61,6 +61,8 @@ public class Util {
      *               Useful.
      */
     public static void updateInventory(ServerPlayerEntity player) {
+        if (player == null) return;
+
         ScreenHandler screenHandler = player.currentScreenHandler;
 
         DefaultedList<ItemStack> updatedStacks = DefaultedList.ofSize(screenHandler.slots.size(), ItemStack.EMPTY);

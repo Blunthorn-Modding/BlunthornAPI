@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.player.*;
 import net.minecraft.util.ActionResult;
 import net.wouterb.blunthornapi.api.event.*;
 import net.wouterb.blunthornapi.core.event.RegisteredFabricEvents;
+import net.wouterb.blunthornapi.core.util.ClientServerLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,48 +32,48 @@ public class BlunthornAPI implements ModInitializer {
 
 	private static void registerTestEvents() {
 		BlockBreakEvent.ATTACK.register(blockActionContext -> {
-			LOGGER.info("Attack block event!");
+			ClientServerLogger.info("Attack block event!", blockActionContext.isClient());
 			return ActionResult.PASS;
 		});
 
 		BlockBreakEvent.BEFORE.register(blockActionContext -> {
-			LOGGER.info("Before block break event!");
+			ClientServerLogger.info("Before block break event!", blockActionContext.isClient());
 			return ActionResult.PASS;
 		});
 
 		BlockBreakEvent.AFTER.register(blockActionContext -> {
-			LOGGER.info("After block break event!");
+			ClientServerLogger.info("After block break event!", blockActionContext.isClient());
 			return ActionResult.PASS;
 		});
 
-		BlockPlacementEvent.EVENT.register(blockActionContext -> {
-			LOGGER.info("Block placement event!");
+		BlockPlaceEvent.EVENT.register(blockActionContext -> {
+			ClientServerLogger.info("Block placement event!", blockActionContext.isClient());
 			return ActionResult.PASS;
 		});
 
 		BlockUseEvent.EVENT.register(blockActionContext -> {
-			LOGGER.info("Block use event!");
+			ClientServerLogger.info("Block use event!", blockActionContext.isClient());
 			return ActionResult.PASS;
 		});
 
 		ItemUseEvent.EVENT.register(itemActionContext -> {
-			LOGGER.info("Item use event!");
-			return ActionResult.FAIL;
+			ClientServerLogger.info("Item use event!", itemActionContext.isClient());
+			return ActionResult.PASS;
 		});
 
 		EntityUseEvent.EVENT.register(entityActionContext -> {
-			LOGGER.info("Entity use event!");
+			ClientServerLogger.info("Entity use event!", entityActionContext.isClient());
 			return ActionResult.PASS;
 		});
 
 		ObjectCraftedEvent.EVENT.register(itemActionContext -> {
-			LOGGER.info("Object crafted event!");
+			ClientServerLogger.info("Object crafted event!", itemActionContext.isClient());
 			return ActionResult.PASS;
 		});
 
 		EntityItemDropEvent.EVENT.register(entityActionContext -> {
-			LOGGER.info("Entity item drop event!");
-			return ActionResult.FAIL;
+			ClientServerLogger.info("Entity item drop event!", entityActionContext.isClient());
+			return ActionResult.PASS;
 		});
 
 	}
