@@ -5,6 +5,7 @@
   "mixins": [
     "crafting.CraftingScreenHandlerMixin",
     "crafting.SmithingScreenHandlerMixin",
+    "data.EntityDataSaver",
     "drop.LivingEntityMixin",
     "item.ArmorItemMixin",
     "item.AxeItemMixin",
