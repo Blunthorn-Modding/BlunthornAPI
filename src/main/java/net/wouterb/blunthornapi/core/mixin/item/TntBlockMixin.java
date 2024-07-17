@@ -11,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
 import net.wouterb.blunthornapi.api.event.ItemUseEvent;
+import net.wouterb.blunthornapi.api.permission.LockType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,7 +23,7 @@ public class TntBlockMixin {
     @Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
     public void onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> ci) {
         ItemStack itemStack = player.getStackInHand(hand);
-        ItemActionContext context = new ItemActionContext(world, player, hand, itemStack);
+        ItemActionContext context = new ItemActionContext(world, player, hand, itemStack, LockType.ITEM_USAGE);
         ActionResult result = ItemUseEvent.emit(context);
         if (result == ActionResult.FAIL)
             ci.setReturnValue(result);

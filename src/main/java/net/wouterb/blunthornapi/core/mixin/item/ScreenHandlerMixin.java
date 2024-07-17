@@ -8,6 +8,7 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.ActionResult;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
 import net.wouterb.blunthornapi.api.event.ItemUseEvent;
+import net.wouterb.blunthornapi.api.permission.LockType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,12 +27,12 @@ public class ScreenHandlerMixin {
         if (slotIndex > 0){
             ItemStack item = screenHandler.getSlot(slotIndex).getStack();
             if (8 - MobEntity.getPreferredEquipmentSlot(cursorStack).getEntitySlotId() == slotIndex) {
-                ItemActionContext context = new ItemActionContext(player.getWorld(), player, item);
+                ItemActionContext context = new ItemActionContext(player.getWorld(), player, item, LockType.ITEM_USAGE);
                 ActionResult result = ItemUseEvent.emit(context);
                 if (result == ActionResult.FAIL)
                     ci.cancel();
             } else if (actionType == SlotActionType.QUICK_MOVE && MobEntity.getPreferredEquipmentSlot(item).isArmorSlot()) {
-                ItemActionContext context = new ItemActionContext(player.getWorld(), player, item);
+                ItemActionContext context = new ItemActionContext(player.getWorld(), player, item, LockType.ITEM_USAGE);
                 ActionResult result = ItemUseEvent.emit(context);
                 if (result == ActionResult.FAIL)
                     ci.cancel();

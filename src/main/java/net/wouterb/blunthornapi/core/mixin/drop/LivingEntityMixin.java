@@ -10,6 +10,7 @@ import net.wouterb.blunthornapi.api.context.EntityActionContext;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
 import net.wouterb.blunthornapi.api.event.EntityItemDropEvent;
 import net.wouterb.blunthornapi.api.event.ItemUseEvent;
+import net.wouterb.blunthornapi.api.permission.LockType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,7 +27,7 @@ public class LivingEntityMixin {
         Entity entity = (LivingEntity) (Object) this;
 
         if (sourceAttacker instanceof PlayerEntity player){
-            EntityActionContext entityActionContext = new EntityActionContext(player.getWorld(), player, entity);
+            EntityActionContext entityActionContext = new EntityActionContext(player.getWorld(), player, entity, LockType.ENTITY_DROP);
             ActionResult result = EntityItemDropEvent.emit(entityActionContext);
             if (result == ActionResult.FAIL)
                 ci.cancel();
@@ -36,7 +37,7 @@ public class LivingEntityMixin {
     @Inject(method = "tryUseTotem", at=@At("HEAD"), cancellable = true)
     private void tryUseTotem(DamageSource source, CallbackInfoReturnable<Boolean> ci) {
         if (((Object)this) instanceof PlayerEntity player) {
-            ItemActionContext itemActionContext = new ItemActionContext(player.getWorld(), player, Items.TOTEM_OF_UNDYING.getDefaultStack());
+            ItemActionContext itemActionContext = new ItemActionContext(player.getWorld(), player, Items.TOTEM_OF_UNDYING.getDefaultStack(), LockType.ITEM_USAGE);
             ActionResult result = ItemUseEvent.emit(itemActionContext);
             if (result == ActionResult.FAIL)
                 ci.setReturnValue(false);

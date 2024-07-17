@@ -10,6 +10,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
 import net.wouterb.blunthornapi.api.event.ItemUseEvent;
+import net.wouterb.blunthornapi.api.permission.LockType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public interface EquipmentMixin {
     @Inject(method = "equipAndSwap", at = @At("HEAD"), cancellable = true)
     default public void equipAndSwap(Item item, World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
-        ItemActionContext context = new ItemActionContext(world, user, hand, item.getDefaultStack());
+        ItemActionContext context = new ItemActionContext(world, user, hand, item.getDefaultStack(), LockType.ITEM_USAGE);
         ActionResult result = ItemUseEvent.emit(context);
         if (result == ActionResult.FAIL)
             ci.setReturnValue(new TypedActionResult<>(result, context.getItemStack()));

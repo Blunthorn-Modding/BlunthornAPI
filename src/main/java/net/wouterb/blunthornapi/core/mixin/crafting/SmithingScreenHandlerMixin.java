@@ -10,6 +10,7 @@ import net.minecraft.screen.SmithingScreenHandler;
 import net.minecraft.util.ActionResult;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
 import net.wouterb.blunthornapi.api.event.ObjectCraftedEvent;
+import net.wouterb.blunthornapi.api.permission.LockType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,7 +32,7 @@ public abstract class SmithingScreenHandlerMixin extends ForgingScreenHandler {
 
         ItemStack output = list.get(0).getOutput(player.getWorld().getRegistryManager());
 
-        ItemActionContext itemActionContext = new ItemActionContext(player.getWorld(), player, output);
+        ItemActionContext itemActionContext = new ItemActionContext(player.getWorld(), player, output, LockType.CRAFTING_RECIPE);
         ActionResult actionResult = ObjectCraftedEvent.emit(itemActionContext);
 
         if (actionResult == ActionResult.FAIL)

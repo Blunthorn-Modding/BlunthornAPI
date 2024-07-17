@@ -25,6 +25,7 @@ import net.wouterb.blunthornapi.api.event.BlockBreakEvent;
 import net.wouterb.blunthornapi.api.event.BlockUseEvent;
 import net.wouterb.blunthornapi.api.event.EntityUseEvent;
 import net.wouterb.blunthornapi.api.event.ItemUseEvent;
+import net.wouterb.blunthornapi.api.permission.LockType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -38,39 +39,39 @@ import static net.wouterb.blunthornapi.api.Util.getBlockId;
  */
 public class RegisteredFabricEvents {
     public static ActionResult onBlockAttack(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction) {
-        BlockActionContext blockActionContext = new BlockActionContext(world, player, pos, getBlockId(world, pos));
+        BlockActionContext blockActionContext = new BlockActionContext(world, player, pos, getBlockId(world, pos), LockType.BREAKING);
         return BlockBreakEvent.emit(BlockBreakEvent.ATTACK, blockActionContext);
     }
 
     public static boolean onBlockBreakBefore(World world, PlayerEntity playerEntity, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
-        BlockActionContext blockActionContext = new BlockActionContext(world, playerEntity, blockPos, getBlockId(blockState));
+        BlockActionContext blockActionContext = new BlockActionContext(world, playerEntity, blockPos, getBlockId(blockState), LockType.BREAKING);
         return BlockBreakEvent.emit(BlockBreakEvent.BEFORE, blockActionContext) != ActionResult.FAIL;
     }
 
     public static void onBlockBreakAfter(World world, PlayerEntity playerEntity, BlockPos blockPos, BlockState blockState, BlockEntity blockEntity) {
-        BlockActionContext blockActionContext = new BlockActionContext(world, playerEntity, blockPos, getBlockId(blockState));
+        BlockActionContext blockActionContext = new BlockActionContext(world, playerEntity, blockPos, getBlockId(blockState), LockType.BREAKING);
         BlockBreakEvent.emit(BlockBreakEvent.AFTER, blockActionContext);
     }
 
     public static TypedActionResult<ItemStack> onUseItem(PlayerEntity player, World world, Hand hand) {
-        ItemActionContext itemActionContext = new ItemActionContext(world, player, hand);
+        ItemActionContext itemActionContext = new ItemActionContext(world, player, hand, LockType.ITEM_USAGE);
         return new TypedActionResult<>(ItemUseEvent.emit(itemActionContext), player.getStackInHand(hand));
     }
 
     public static ActionResult onUseBlock(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
         BlockPos blockPos = hitResult.getBlockPos();
-        BlockActionContext blockActionContext = new BlockActionContext(world, player, blockPos, getBlockId(world, blockPos));
+        BlockActionContext blockActionContext = new BlockActionContext(world, player, blockPos, getBlockId(world, blockPos), LockType.BLOCK_INTERACTION);
         return BlockUseEvent.emit(blockActionContext);
     }
 
     public static ActionResult onAttackEntity(PlayerEntity player, World world, Hand hand, Entity entity, EntityHitResult hitResult) {
-        ItemActionContext itemActionContext = new ItemActionContext(world, player, hand);
+        ItemActionContext itemActionContext = new ItemActionContext(world, player, hand, LockType.ITEM_USAGE);
         return ItemUseEvent.emit(itemActionContext);
     }
 
     public static ActionResult onUseEntity(PlayerEntity player, World world, Hand hand, Entity entity, @Nullable EntityHitResult hitResult) {
-        EntityActionContext entityActionContext = new EntityActionContext(world, player, entity);
-        ItemActionContext itemActionContext = new ItemActionContext(world, player, hand, player.getStackInHand(hand));
+        EntityActionContext entityActionContext = new EntityActionContext(world, player, entity, LockType.ENTITY_INTERACTION);
+        ItemActionContext itemActionContext = new ItemActionContext(world, player, hand, player.getStackInHand(hand), LockType.ITEM_USAGE);
 
         ActionResult entityResult = EntityUseEvent.emit(entityActionContext);
         if (!itemActionContext.getItemStack().isEmpty()) {

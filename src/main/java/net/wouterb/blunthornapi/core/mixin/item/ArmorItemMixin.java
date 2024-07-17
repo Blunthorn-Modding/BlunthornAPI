@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
 import net.wouterb.blunthornapi.api.event.ItemUseEvent;
+import net.wouterb.blunthornapi.api.permission.LockType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,7 +32,7 @@ public class ArmorItemMixin {
         LivingEntity livingEntity = (LivingEntity)list.get(0);
 
         if (livingEntity instanceof PlayerEntity player) {
-            ItemActionContext context = new ItemActionContext(player.getWorld(), player, armor);
+            ItemActionContext context = new ItemActionContext(player.getWorld(), player, armor, LockType.ITEM_USAGE);
             ActionResult result = ItemUseEvent.emit(context);
             if (result == ActionResult.FAIL)
                 ci.cancel();

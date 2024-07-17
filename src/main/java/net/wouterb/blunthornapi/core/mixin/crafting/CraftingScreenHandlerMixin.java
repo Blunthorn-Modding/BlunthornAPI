@@ -12,6 +12,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
 import net.wouterb.blunthornapi.api.event.ObjectCraftedEvent;
+import net.wouterb.blunthornapi.api.permission.LockType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,7 +35,7 @@ public class CraftingScreenHandlerMixin {
 
         ItemStack output = optional.get().getOutput(world.getRegistryManager());
 
-        ItemActionContext itemActionContext = new ItemActionContext(world, player, output);
+        ItemActionContext itemActionContext = new ItemActionContext(world, player, output, LockType.CRAFTING_RECIPE);
         ActionResult actionResult = ObjectCraftedEvent.emit(itemActionContext);
 
         if (actionResult == ActionResult.FAIL)

@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
+import net.wouterb.blunthornapi.api.permission.LockType;
 
 import static net.wouterb.blunthornapi.api.Util.updateInventory;
 
@@ -42,7 +43,7 @@ public interface ItemUseEvent {
      * @return the ActionResult of the event.
      */
     static ActionResult emit(ItemUsageContext context) {
-        ItemActionContext itemActionContext = new ItemActionContext(context.getWorld(), context.getPlayer(), context.getHand(), context.getStack());
+        ItemActionContext itemActionContext = new ItemActionContext(context.getWorld(), context.getPlayer(), context.getHand(), context.getStack(), LockType.ITEM_USAGE);
         return EVENT.invoker().interact(itemActionContext);
     }
 }
