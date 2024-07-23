@@ -58,7 +58,6 @@ public class Util {
      * Updates the inventory of a certain player. Use when cancelling actions that affect the player's inventory,
      * such as placing blocks.
      * @param player the player of which the inventory needs to be updated.
-     *               Useful.
      */
     public static void updateInventory(ServerPlayerEntity player) {
         if (player == null) return;

@@ -1,15 +1,10 @@
 package net.wouterb.blunthornapi.core.event;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.PillarBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ToolItem;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -27,8 +22,6 @@ import net.wouterb.blunthornapi.api.event.EntityUseEvent;
 import net.wouterb.blunthornapi.api.event.ItemUseEvent;
 import net.wouterb.blunthornapi.api.permission.LockType;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 import static net.wouterb.blunthornapi.api.Util.getBlockId;
 

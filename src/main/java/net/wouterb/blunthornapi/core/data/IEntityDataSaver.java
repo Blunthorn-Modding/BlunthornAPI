@@ -13,10 +13,10 @@ public interface IEntityDataSaver {
         if (wipe)
             blunthornapi$setEmptyValues(mod_id, persistentModData);
         else
-            blunthornapi$setDefaultValues(mod_id, persistentModData);
+            blunthornapi$setDefaultValues(persistentModData);
     }
 
-    void blunthornapi$setDefaultValues(String mod_id, IPersistentPlayerData persistentModData);
+    void blunthornapi$setDefaultValues(IPersistentPlayerData persistentModData);
 
     void blunthornapi$setEmptyValues(String mod_id, IPersistentPlayerData persistentModData);
 }

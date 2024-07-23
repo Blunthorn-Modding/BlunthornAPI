@@ -2,17 +2,26 @@ package net.wouterb.blunthornapi;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.*;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
+import net.wouterb.blunthornapi.api.config.BlunthornConfig;
+import net.wouterb.blunthornapi.api.config.ConfigManager;
+import net.wouterb.blunthornapi.api.data.IPersistentPlayerData;
 import net.wouterb.blunthornapi.api.event.*;
 import net.wouterb.blunthornapi.api.permission.LockType;
 import net.wouterb.blunthornapi.api.permission.Permission;
+import net.wouterb.blunthornapi.core.ConfigTest;
 import net.wouterb.blunthornapi.core.data.IEntityDataSaver;
+import net.wouterb.blunthornapi.core.data.ModRegistries;
 import net.wouterb.blunthornapi.core.event.RegisteredFabricEvents;
+import net.wouterb.blunthornapi.core.network.ConfigSyncHandler;
 import net.wouterb.blunthornapi.core.util.ClientServerLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +33,7 @@ public class BlunthornAPI implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Starting Blunthorn API");
+		registerTestConfig();
 		registerFabricEvents();
 		setupTestLocks();
 		registerTestEvents();
@@ -37,6 +47,32 @@ public class BlunthornAPI implements ModInitializer {
 		UseBlockCallback.EVENT.register(RegisteredFabricEvents::onUseBlock);
 		AttackEntityCallback.EVENT.register(RegisteredFabricEvents::onAttackEntity);
 		UseEntityCallback.EVENT.register(RegisteredFabricEvents::onUseEntity);
+
+		ServerPlayConnectionEvents.JOIN.register(BlunthornAPI::onPlayerJoin);
+	}
+
+	private static void onPlayerJoin(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server){
+		ServerPlayerEntity player = handler.getPlayer();
+		for (String modId : ModRegistries.getRegisteredModIds()) {
+			NbtCompound data = ((IEntityDataSaver) player).blunthornapi$getPersistentData(modId);
+
+			if (data.isEmpty()) {
+				LOGGER.info("Player without BlockBlock data joined, assigning default values...");
+				IPersistentPlayerData modPersisentData = ModRegistries.getModPersistentData(modId);
+				((IEntityDataSaver) player).blunthornapi$setDefaultValues(modPersisentData);
+			}
+//			ClientLockSyncHandler.updateClient(player, data);
+			ConfigSyncHandler.updateClient(player);
+		}
+	}
+
+	static BlunthornConfig config;
+
+	public static void registerTestConfig() {
+		config = new ConfigTest();
+		System.out.println(((ConfigTest)config).getTesting());
+		System.out.println(((ConfigTest)config).getBooltest());
+		ConfigManager.registerConfig(MOD_ID, config);
 	}
 
 	private static void setupTestLocks() {
