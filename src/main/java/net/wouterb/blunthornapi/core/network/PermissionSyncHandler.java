@@ -67,7 +67,7 @@ public class PermissionSyncHandler {
 
     private static void setPersistentData(PlayerEntity player, String modId, NbtCompound nbt) {
         IEntityDataSaver dataSaver = (IEntityDataSaver) player;
-        dataSaver.blunthornapi$setPersistentData(modId, nbt);
+        dataSaver.blunthornapi$addPersistentData(modId, nbt);
     }
 
     private static void storePersistentData(String modId, NbtCompound data) {

@@ -75,7 +75,7 @@ public class BlunthornAPI implements ModInitializer {
 
 		for (String modId : modIds) {
 			NbtCompound oldNbt = ((IEntityDataSaver) oldPlayer).blunthornapi$getPersistentData(modId);
-			((IEntityDataSaver) newPlayer).blunthornapi$setPersistentData(modId, oldNbt);
+			((IEntityDataSaver) newPlayer).blunthornapi$addPersistentData(modId, oldNbt);
 			PermissionSyncHandler.updateClient(newPlayer);
 		}
 	}

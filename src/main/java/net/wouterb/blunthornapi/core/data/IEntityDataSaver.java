@@ -7,16 +7,16 @@ public interface IEntityDataSaver {
 
     NbtCompound blunthornapi$getPersistentData(String mod_id);
 
-    void blunthornapi$setPersistentData(String mod_id, NbtCompound data);
+    void blunthornapi$addPersistentData(String mod_id, NbtCompound data);
 
     default void resetPersistentData(String mod_id, IPersistentPlayerData persistentModData, boolean wipe) {
         if (wipe)
-            blunthornapi$setEmptyValues(mod_id, persistentModData);
+            blunthornapi$setEmptyValues(mod_id);
         else
             blunthornapi$setDefaultValues(persistentModData);
     }
 
     void blunthornapi$setDefaultValues(IPersistentPlayerData persistentModData);
 
-    void blunthornapi$setEmptyValues(String mod_id, IPersistentPlayerData persistentModData);
+    void blunthornapi$setEmptyValues(String mod_id);
 }
