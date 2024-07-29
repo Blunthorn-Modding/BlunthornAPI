@@ -25,7 +25,10 @@ public class EntityDataSaver implements IEntityDataSaver {
 
     @Override
     public NbtCompound blunthornapi$getPersistentData(@NotNull String mod_id) {
-        return persistentPlayerData.get(mod_id);
+        NbtCompound data = persistentPlayerData.get(mod_id);
+        if (data == null)
+            data = new NbtCompound();
+        return data;
     }
 
     @Override

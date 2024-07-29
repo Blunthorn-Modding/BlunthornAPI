@@ -23,12 +23,14 @@ public abstract class BlunthornConfig {
      * The filepath used for the config file. Supports sub-folders using forward slashes.
      * i.e. <code>my_mod/my_mod_config.properties</code>
      */
-    protected String filePath = "DEFAULT_BLUNTHORNAPI_CONFIG.properties";
-    protected String modId = "BlunthornAPI";
+    protected String filePath = "default_blunthorn_api_config.properties";
+    protected String modId = "blunthornapi";
 
     protected void init() {
         if (!filePath.endsWith(FILE_EXTENSION))
             filePath += FILE_EXTENSION;
+        filePath = filePath.toLowerCase();
+        modId = modId.toLowerCase();
         Path path = Path.of(String.valueOf(CONFIG_DIR), filePath);
         configFile = path.toFile();
         if (!configFile.exists()) {
@@ -36,6 +38,10 @@ public abstract class BlunthornConfig {
         } else {
             load();
         }
+    }
+
+    public String getModId() {
+        return modId;
     }
 
     public String getConfigName() {

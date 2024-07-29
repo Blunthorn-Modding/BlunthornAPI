@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"net.wouterb.blunthornapi.BlunthornAPI"
+		],
+		"client": [
+			"net.wouterb.blunthornapi.BlunthornAPIClient"
 		]
 	},
 	"mixins": [

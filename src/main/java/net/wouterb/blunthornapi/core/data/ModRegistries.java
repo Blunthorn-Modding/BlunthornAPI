@@ -1,17 +1,16 @@
 package net.wouterb.blunthornapi.core.data;
 
 import net.wouterb.blunthornapi.api.data.IPersistentPlayerData;
+import net.wouterb.blunthornapi.core.network.PermissionSyncHandler;
 
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 public class ModRegistries {
     private static Dictionary<String, IPersistentPlayerData> registeredMods = new Hashtable<>();
 
-    public static void registerPermissionMod(String mod_id, IPersistentPlayerData modPersistentData) {
-        registeredMods.put(mod_id, modPersistentData);
+    public static void registerMod(String modId, IPersistentPlayerData modPersistentData) {
+        registeredMods.put(modId, modPersistentData);
+        PermissionSyncHandler.registerPermissionPacket(modId);
     }
 
     public static IPersistentPlayerData getModPersistentData(String modId) {

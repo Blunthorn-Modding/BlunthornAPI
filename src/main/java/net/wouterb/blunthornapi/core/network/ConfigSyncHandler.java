@@ -15,6 +15,8 @@ import java.lang.reflect.Field;
 import java.util.Enumeration;
 
 public class ConfigSyncHandler {
+    private static final String PACKET_NAMESPACE = "blunthorn_config_sync";
+
     public static class DataType {
         public static final int BOOL = 0;
         public static final int INT = 1;
@@ -29,7 +31,7 @@ public class ConfigSyncHandler {
         while (configs.hasMoreElements()) {
             BlunthornConfig config = configs.nextElement();
             String configId = config.getConfigId();
-            Identifier identifier = new Identifier("config_sync", configId);
+            Identifier identifier = new Identifier(PACKET_NAMESPACE, configId);
             Field[] fields = config.getClass().getDeclaredFields();
 
             for (Field field : fields) {
@@ -66,7 +68,7 @@ public class ConfigSyncHandler {
 
 
     public static void registerConfigPacket(String configId) {
-        Identifier identifier = new Identifier("config_sync", configId);
+        Identifier identifier = new Identifier(PACKET_NAMESPACE, configId);
         ClientPlayNetworking.registerGlobalReceiver(identifier, ((client, handler, buf, responseSender) -> {
             String fieldName = buf.readString();
             byte type = buf.readByte();

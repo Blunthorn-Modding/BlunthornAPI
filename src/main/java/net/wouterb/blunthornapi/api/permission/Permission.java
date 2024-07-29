@@ -19,8 +19,8 @@ public class Permission {
      * @return whether the object is locked or not
      */
     public static boolean isObjectLocked(ActionContext context, String modId) {
-        if (context.isClient()) return false;
-        ServerPlayerEntity player = context.getServerPlayer();
+//        if (context.isClient()) return false;
+        PlayerEntity player = context.getPlayer();
         if (player.isCreative()) return false;
 
         NbtList nbtList = getListOfLockedObjects(player, context.getLockType(), modId);
@@ -31,9 +31,9 @@ public class Permission {
 
             // Check if the object is part of a tag
             if (nbtString.startsWith("#")) {
-                System.out.println(nbtString);
+//                System.out.println(nbtString);
                 String tag = nbtString.replace("#", "");
-                System.out.println("Object in tag: " + context.isObjectInTag(tag));
+//                System.out.println("Object in tag: " + context.isObjectInTag(tag));
                 if (context instanceof BlockActionContext blockActionContext) {
                     if (blockActionContext.isObjectInTag(tag)) {
                         return true;

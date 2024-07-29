@@ -1,5 +1,6 @@
 package net.wouterb.blunthornapi.core;
 
+import net.wouterb.blunthornapi.BlunthornAPI;
 import net.wouterb.blunthornapi.api.config.BlankLine;
 import net.wouterb.blunthornapi.api.config.BlunthornConfig;
 import net.wouterb.blunthornapi.api.config.Comment;
@@ -23,7 +24,7 @@ public class ConfigTest extends BlunthornConfig {
 
     public ConfigTest() {
         this.filePath = "config_test.properties";
-        this.modId = "ConfigTest";
+        this.modId = BlunthornAPI.MOD_ID;
         init();
     }
 }
