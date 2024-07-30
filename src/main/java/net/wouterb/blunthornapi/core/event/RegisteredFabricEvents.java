@@ -32,7 +32,7 @@ import static net.wouterb.blunthornapi.api.Util.getBlockId;
  */
 public class RegisteredFabricEvents {
     public static ActionResult onBlockAttack(PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction) {
-        BlockActionContext blockActionContext = new BlockActionContext(world, player, pos, getBlockId(world, pos), LockType.BREAKING);
+        BlockActionContext blockActionContext = new BlockActionContext(world, player, pos, getBlockId(world, pos), LockType.BREAKING, hand);
         return BlockBreakEvent.emit(BlockBreakEvent.ATTACK, blockActionContext);
     }
 
@@ -53,7 +53,7 @@ public class RegisteredFabricEvents {
 
     public static ActionResult onUseBlock(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
         BlockPos blockPos = hitResult.getBlockPos();
-        BlockActionContext blockActionContext = new BlockActionContext(world, player, blockPos, getBlockId(world, blockPos), LockType.BLOCK_INTERACTION);
+        BlockActionContext blockActionContext = new BlockActionContext(world, player, blockPos, getBlockId(world, blockPos), LockType.BLOCK_INTERACTION, hand);
         return BlockUseEvent.emit(blockActionContext);
     }
 

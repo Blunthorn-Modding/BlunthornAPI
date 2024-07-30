@@ -9,6 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.wouterb.blunthornapi.api.context.ActionContext;
 import net.wouterb.blunthornapi.api.context.BlockActionContext;
 import net.wouterb.blunthornapi.core.data.IEntityDataSaver;
+import net.wouterb.blunthornapi.core.network.PermissionSyncHandler;
 
 import java.util.regex.Pattern;
 
@@ -19,7 +20,6 @@ public class Permission {
      * @return whether the object is locked or not
      */
     public static boolean isObjectLocked(ActionContext context, String modId) {
-//        if (context.isClient()) return false;
         PlayerEntity player = context.getPlayer();
         if (player.isCreative()) return false;
 
@@ -31,9 +31,7 @@ public class Permission {
 
             // Check if the object is part of a tag
             if (nbtString.startsWith("#")) {
-//                System.out.println(nbtString);
                 String tag = nbtString.replace("#", "");
-//                System.out.println("Object in tag: " + context.isObjectInTag(tag));
                 if (context instanceof BlockActionContext blockActionContext) {
                     if (blockActionContext.isObjectInTag(tag)) {
                         return true;
@@ -48,6 +46,51 @@ public class Permission {
             }
         }
 
+        return false;
+    }
+
+
+    /**
+     * Will unlock a specific object for the given player.
+     * @param player the player to unlock the object for.
+     * @param objectId the object to unlock.
+     * @param lockType which category to unlock the object in.
+     * @param modId the ID of the relevant mod.
+     * @return true if the object was successfully removed from the list. False if the objectId was not found.
+     */
+    public static boolean unlockObject(IEntityDataSaver player, String objectId, LockType lockType, String modId) {
+        NbtCompound nbt = player.blunthornapi$getPersistentData(modId);
+        String nbtKey = lockType.toString();
+        NbtList locked = nbt.getList(nbtKey, NbtCompound.STRING_TYPE);
+        if (locked.contains(NbtString.of(objectId))) {
+            locked.remove(NbtString.of(objectId));
+            nbt.put(nbtKey, locked);
+            player.blunthornapi$setPersistentData(modId, nbt);
+            PermissionSyncHandler.updateModClientPermissions((ServerPlayerEntity) player, modId);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Will lock a specific object for the given player.
+     * @param player the player to lock the object for.
+     * @param objectId the object to lock.
+     * @param lockType which category to lock the object in.
+     * @param modId the ID of the relevant mod.
+     * @return true if the object was successfully added to the list. False if the objectId was not found.
+     */
+    public static boolean lockObject(IEntityDataSaver player, String objectId, LockType lockType, String modId){
+        NbtCompound nbt = player.blunthornapi$getPersistentData(modId);
+        String nbtKey = lockType.toString();
+        NbtList locked = nbt.getList(nbtKey, NbtCompound.STRING_TYPE);
+        if (!locked.contains(NbtString.of(objectId))){
+            locked.add(NbtString.of(objectId));
+            nbt.put(nbtKey, locked);
+            player.blunthornapi$setPersistentData(modId, nbt);
+            PermissionSyncHandler.updateModClientPermissions((ServerPlayerEntity) player, modId);
+            return true;
+        }
         return false;
     }
 

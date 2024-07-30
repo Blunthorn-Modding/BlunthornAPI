@@ -22,17 +22,21 @@ public class PermissionSyncHandler {
     private static final String PACKET_NAMESPACE = "blunthorn_permission_sync";
     private static Dictionary<String, NbtCompound> storedPersistentData = new Hashtable<>();
 
-    public static void updateClient(ServerPlayerEntity player) {
+    public static void updateAllClientPermissions(ServerPlayerEntity player) {
         List<String> modIds = ModRegistries.getRegisteredModIds();
-        IEntityDataSaver dataSaver = (IEntityDataSaver) player;
 
         for(String modId : modIds) {
-            PacketByteBuf buf = PacketByteBufs.create();
-            NbtCompound nbtData = dataSaver.blunthornapi$getPersistentData(modId);
-            buf.writeString(modId);
-            buf.writeNbt(nbtData);
-            ServerPlayNetworking.send(player, new Identifier(PACKET_NAMESPACE, modId), buf);
+            updateModClientPermissions(player, modId);
         }
+    }
+
+    public static void updateModClientPermissions(ServerPlayerEntity player, String modId) {
+        IEntityDataSaver dataSaver = (IEntityDataSaver) player;
+        PacketByteBuf buf = PacketByteBufs.create();
+        NbtCompound nbtData = dataSaver.blunthornapi$getPersistentData(modId);
+        buf.writeString(modId);
+        buf.writeNbt(nbtData);
+        ServerPlayNetworking.send(player, new Identifier(PACKET_NAMESPACE, modId), buf);
     }
 
     public static void onUpdateReceived(PlayerEntity player, @Nullable PacketByteBuf buf) {

@@ -65,8 +65,8 @@ public class BlunthornAPI implements ModInitializer {
 				IPersistentPlayerData modPersistentData = ModRegistries.getModPersistentData(modId);
 				((IEntityDataSaver) player).blunthornapi$setDefaultValues(modPersistentData);
 			}
-			PermissionSyncHandler.updateClient(player);
-			ConfigSyncHandler.updateClient(player);
+			PermissionSyncHandler.updateAllClientPermissions(player);
+			ConfigSyncHandler.updateAllClientConfigs(player);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class BlunthornAPI implements ModInitializer {
 		for (String modId : modIds) {
 			NbtCompound oldNbt = ((IEntityDataSaver) oldPlayer).blunthornapi$getPersistentData(modId);
 			((IEntityDataSaver) newPlayer).blunthornapi$addPersistentData(modId, oldNbt);
-			PermissionSyncHandler.updateClient(newPlayer);
+			PermissionSyncHandler.updateAllClientPermissions(newPlayer);
 		}
 	}
 

@@ -5,6 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -13,6 +14,12 @@ import net.wouterb.blunthornapi.api.permission.LockType;
 public class BlockActionContext extends ActionContext {
     private final BlockPos blockPos;
     private final String blockId;
+    private String usedItemId;
+
+    public BlockActionContext(World world, PlayerEntity player, BlockPos blockpos, String blockId, LockType lockType, Hand hand) {
+        this(world, player, blockpos, blockId, lockType);
+        this.usedItemId = Registries.ITEM.getId(player.getStackInHand(hand).getItem()).toString();
+    }
 
     public BlockActionContext(World world, PlayerEntity player, BlockPos blockPos, String blockId, LockType lockType) {
         super(world, player, lockType);
@@ -35,6 +42,9 @@ public class BlockActionContext extends ActionContext {
         return blockId;
     }
 
+    public String getUsedItemId() {
+        return usedItemId;
+    }
 
     @Override
     public boolean isObjectInTag(String tag) {

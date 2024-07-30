@@ -45,6 +45,11 @@ public class EntityDataSaver implements IEntityDataSaver {
     }
 
     @Override
+    public void blunthornapi$setPersistentData(String modId, NbtCompound data) {
+        persistentPlayerData.put(modId, data);
+    }
+
+    @Override
     public void blunthornapi$setDefaultValues(IPersistentPlayerData persistentModData) {
         blunthornapi$addPersistentData(persistentModData.getTargetModId(), persistentModData.getDefaultValues());
     }

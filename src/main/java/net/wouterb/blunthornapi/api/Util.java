@@ -10,6 +10,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.wouterb.blunthornapi.core.network.ConfigSyncHandler;
+import net.wouterb.blunthornapi.core.network.PermissionSyncHandler;
 
 /**
  * Utility class. These methods you may need often, so use these to simplify your code.
@@ -71,5 +73,21 @@ public class Util {
 
         InventoryS2CPacket inventoryUpdatePacket = new InventoryS2CPacket(screenHandler.syncId, screenHandler.nextRevision(), updatedStacks, ItemStack.EMPTY);
         player.networkHandler.sendPacket(inventoryUpdatePacket);
+    }
+
+    public static void updateAllClientConfigs(ServerPlayerEntity serverPlayer) {
+        ConfigSyncHandler.updateAllClientConfigs(serverPlayer);
+    }
+
+    public static void updateModClientConfigs(ServerPlayerEntity serverPlayer, String modId) {
+
+    }
+
+    public static void updateAllClientPermissions(ServerPlayerEntity serverPlayer) {
+        PermissionSyncHandler.updateAllClientPermissions(serverPlayer);
+    }
+
+    public static void updateModClientPermissions(ServerPlayerEntity serverPlayer, String modId){
+        PermissionSyncHandler.updateModClientPermissions(serverPlayer, modId);
     }
 }

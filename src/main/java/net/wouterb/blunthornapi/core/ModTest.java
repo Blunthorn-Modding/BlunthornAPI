@@ -20,11 +20,6 @@ public class ModTest implements IPersistentPlayerData {
     }
 
     @Override
-    public NbtCompound getEmptyValues() {
-        return new NbtCompound();
-    }
-
-    @Override
     public String getTargetModId() {
         return "test";
     }

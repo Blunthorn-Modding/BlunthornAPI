@@ -12,7 +12,9 @@ import net.wouterb.blunthornapi.api.config.ConfigManager;
 import net.wouterb.blunthornapi.api.config.StoreInConfig;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 public class ConfigSyncHandler {
     private static final String PACKET_NAMESPACE = "blunthorn_config_sync";
@@ -25,43 +27,45 @@ public class ConfigSyncHandler {
 
     }
 
-    public static void updateClient(ServerPlayerEntity player) {
+    public static void updateAllClientConfigs(ServerPlayerEntity player) {
+        List<String> configIds = ConfigManager.getConfigIds();
+        for (String configId : configIds) {
+            updateModClientConfigs(player, configId);
+        }
+    }
 
-        Enumeration<BlunthornConfig> configs = ConfigManager.getAllConfigs();
-        while (configs.hasMoreElements()) {
-            BlunthornConfig config = configs.nextElement();
-            String configId = config.getConfigId();
-            Identifier identifier = new Identifier(PACKET_NAMESPACE, configId);
-            Field[] fields = config.getClass().getDeclaredFields();
+    public static void updateModClientConfigs(ServerPlayerEntity serverPlayer, String configId) {
+        BlunthornConfig config = ConfigManager.getConfig(configId);
+        Identifier identifier = new Identifier(PACKET_NAMESPACE, configId);
+        Field[] fields = config.getClass().getDeclaredFields();
 
-            for (Field field : fields) {
-                try {
-                    field.setAccessible(true);
-                    if (!field.isAnnotationPresent(StoreInConfig.class)) continue;
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                if (!field.isAnnotationPresent(StoreInConfig.class)) continue;
 
-                    PacketByteBuf buf = PacketByteBufs.create();
-                    buf.writeString(field.getName());
+                PacketByteBuf buf = PacketByteBufs.create();
+                buf.writeString(field.getName());
 
-                    Object value = field.get(config);
+                Object value = field.get(config);
 
-                    if (value instanceof String) {
-                        buf.writeByte(DataType.STRING);
-                        buf.writeString(value.toString());
-                    } else if (value instanceof Float) {
-                        buf.writeByte(DataType.FLOAT);
-                        buf.writeFloat(Float.parseFloat(value.toString()));
-                    } else if (value instanceof Integer) {
-                        buf.writeByte(DataType.INT);
-                        buf.writeInt(Integer.parseInt(value.toString()));
-                    } else if (value instanceof Boolean) {
-                        buf.writeByte(DataType.BOOL);
-                        buf.writeBoolean(Boolean.parseBoolean(value.toString()));
-                    }
-
-                    ServerPlayNetworking.send(player, identifier, buf);
-                } catch (IllegalAccessException e) {
-                    BlunthornAPI.LOGGER.error(e.toString());
+                if (value instanceof String) {
+                    buf.writeByte(DataType.STRING);
+                    buf.writeString(value.toString());
+                } else if (value instanceof Float) {
+                    buf.writeByte(DataType.FLOAT);
+                    buf.writeFloat(Float.parseFloat(value.toString()));
+                } else if (value instanceof Integer) {
+                    buf.writeByte(DataType.INT);
+                    buf.writeInt(Integer.parseInt(value.toString()));
+                } else if (value instanceof Boolean) {
+                    buf.writeByte(DataType.BOOL);
+                    buf.writeBoolean(Boolean.parseBoolean(value.toString()));
                 }
+
+                ServerPlayNetworking.send(serverPlayer, identifier, buf);
+            } catch (IllegalAccessException e) {
+                BlunthornAPI.LOGGER.error(e.toString());
             }
         }
     }
