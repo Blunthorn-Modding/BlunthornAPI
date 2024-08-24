@@ -40,28 +40,35 @@ public class PermissionSyncHandler {
     }
 
     public static void onUpdateReceived(PlayerEntity player, @Nullable PacketByteBuf buf) {
+//        BlunthornAPI.LOGGER.info("API: Received permission update");
         if (player == null){
             // Update came from server, which only sends us the buffer for some reason, so we store it.
             if (buf != null)
                 storePersistentData(buf.readString(), buf.readNbt());
             return;
         }
+//        BlunthornAPI.LOGGER.info("API: PU - Player exists");
 
         if (buf == null) {
+//            BlunthornAPI.LOGGER.info("API: PU - No buffer");
+
             for (String modId : Collections.list(storedPersistentData.keys())) {
                 setPersistentData(player, modId, storedPersistentData.get(modId));
             }
 
         } else {
+//            BlunthornAPI.LOGGER.info("API: PU - Buffer found");
+
             String modId = buf.readString();
             NbtCompound persistentData = buf.readNbt();
+//            BlunthornAPI.LOGGER.info(persistentData.toString());
             setPersistentData(player, modId, persistentData);
         }
 
     }
 
     public static void registerPermissionPacket(String modId) {
-        BlunthornAPI.LOGGER.info("Registering permission packet for mod: {}", modId);
+//        BlunthornAPI.LOGGER.info("Registering permission packet for mod: {}", modId);
         Identifier identifier = new Identifier(PACKET_NAMESPACE, modId);
 
         ClientPlayNetworking.registerGlobalReceiver(identifier, ((client, handler, buf, responseSender) -> {
@@ -71,7 +78,7 @@ public class PermissionSyncHandler {
 
     private static void setPersistentData(PlayerEntity player, String modId, NbtCompound nbt) {
         IEntityDataSaver dataSaver = (IEntityDataSaver) player;
-        dataSaver.blunthornapi$addPersistentData(modId, nbt);
+        dataSaver.blunthornapi$setPersistentData(modId, nbt);
     }
 
     private static void storePersistentData(String modId, NbtCompound data) {

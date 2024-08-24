@@ -9,28 +9,35 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.wouterb.blunthornapi.api.permission.LockType;
+import org.jetbrains.annotations.Nullable;
 
 public class EntityActionContext extends ActionContext{
+    @Nullable
     private final Entity entity;
 
     private final String entityId;
 
+    public EntityActionContext(World world, PlayerEntity player, String entityId, LockType lockType) {
+        super(world, player, lockType);
+        this.entity = null;
+        this.entityId = entityId;
+    }
+
     public EntityActionContext(World world, PlayerEntity player, Entity entity, LockType lockType) {
         super(world, player, lockType);
         this.entity = entity;
-
         this.entityId = EntityType.getId(entity.getType()).toString();
     }
 
     /**
      * @return the entity with which the interaction took place.
      */
-    public Entity getEntity() {
+    public @Nullable Entity getEntity() {
         return entity;
     }
 
     /**
-     * @return the ID of the entity whith which the interaction took place.
+     * @return the ID of the entity with which the interaction took place.
      */
     public String getEntityId() {
         return entityId;

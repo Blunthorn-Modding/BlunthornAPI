@@ -14,7 +14,7 @@ public class BlunthornAPIClient implements ClientModInitializer {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> PermissionSyncHandler.onUpdateReceived(client.player, null));
 
         for (String configId : ConfigManager.getConfigIds()) {
-            System.out.println(configId);
+            BlunthornAPI.LOGGER.info("Loading config with ID: {}", configId);
             ConfigSyncHandler.registerConfigPacket(configId);
         }
     }
