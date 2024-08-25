@@ -1,6 +1,7 @@
 package net.wouterb.blunthornapi.api.config;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.player.PlayerEntity;
 import net.wouterb.blunthornapi.BlunthornAPI;
 import org.apache.commons.compress.utils.FileNameUtils;
 
@@ -38,6 +39,16 @@ public abstract class BlunthornConfig {
         } else {
             load();
         }
+    }
+
+    /**
+     * Override this function if you want to have config options that determine when a player gets to bypass
+     * restrictions, such as creative or operators
+     * @param player the player to check
+     * @return whether the player is allowed to bypass or not.
+     */
+    public boolean isPlayerBypassingRestrictions(PlayerEntity player) {
+        return false;
     }
 
     public String getModId() {

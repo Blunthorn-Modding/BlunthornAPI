@@ -6,11 +6,15 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.wouterb.blunthornapi.api.config.BlunthornConfig;
+import net.wouterb.blunthornapi.api.config.ConfigManager;
 import net.wouterb.blunthornapi.api.context.ActionContext;
 import net.wouterb.blunthornapi.api.context.BlockActionContext;
 import net.wouterb.blunthornapi.core.data.IEntityDataSaver;
 import net.wouterb.blunthornapi.core.network.PermissionSyncHandler;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Permission {
@@ -21,7 +25,15 @@ public class Permission {
      */
     public static boolean isObjectLocked(ActionContext context, String modId) {
         PlayerEntity player = context.getPlayer();
-        if (player.isCreative()) return false;
+
+        // Check for config bypass settings
+        List<BlunthornConfig> configs = Collections.list(ConfigManager.getAllConfigs());
+        for (BlunthornConfig config : configs) {
+            if (config.getModId().equals(modId)) {
+                if (config.isPlayerBypassingRestrictions(context.getPlayer()))
+                    return false;
+            }
+        }
 
         NbtList nbtList = getListOfLockedObjects(player, context.getLockType(), modId);
         if (nbtList.contains(NbtString.of(context.getObjectId()))) return true;
