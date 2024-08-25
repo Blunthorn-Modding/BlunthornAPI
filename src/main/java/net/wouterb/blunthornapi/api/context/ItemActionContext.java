@@ -30,7 +30,13 @@ public class ItemActionContext extends ActionContext{
         this.itemStack = itemStack;
 
         this.itemId = Registries.ITEM.getId(itemStack.getItem()).toString();
+    }
 
+    public ItemActionContext(BlockActionContext context) {
+        super(context.getWorld(), context.getPlayer(), LockType.ITEM_USAGE);
+        this.hand = null;
+        this.itemId = context.getUsedItemId();
+        this.itemStack = Registries.ITEM.get(new Identifier(itemId)).getDefaultStack();
     }
 
     /**

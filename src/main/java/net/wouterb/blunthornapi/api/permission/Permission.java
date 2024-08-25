@@ -44,11 +44,14 @@ public class Permission {
             // Check if the object is part of a tag
             if (nbtString.startsWith("#")) {
                 String tag = nbtString.replace("#", "");
-                if (context instanceof BlockActionContext blockActionContext) {
-                    if (blockActionContext.isObjectInTag(tag)) {
-                        return true;
-                    }
+                if (context.isObjectInTag(tag)) {
+                    return true;
                 }
+//                if (context instanceof BlockActionContext blockActionContext) {
+//                    if (blockActionContext.isObjectInTag(tag)) {
+//                        return true;
+//                    }
+//                }
             }
 
             // Check if object matches with any ID's containing the '*' wildcard
