@@ -124,11 +124,15 @@ public class BlunthornAPI implements ModInitializer {
 
 		BlockPlaceEvent.EVENT.register(blockActionContext -> {
 			ClientServerLogger.info("Block placement event!", blockActionContext.isClient());
+			if (Permission.isObjectLocked(blockActionContext, "test"))
+				return ActionResult.FAIL;
 			return ActionResult.PASS;
 		});
 
 		BlockUseEvent.EVENT.register(blockActionContext -> {
 			ClientServerLogger.info("Block use event!", blockActionContext.isClient());
+			if (Permission.isObjectLocked(blockActionContext, "test"))
+				return ActionResult.FAIL;
 			return ActionResult.PASS;
 		});
 

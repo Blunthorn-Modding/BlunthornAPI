@@ -4,6 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -16,10 +17,7 @@ import net.minecraft.world.World;
 import net.wouterb.blunthornapi.api.context.BlockActionContext;
 import net.wouterb.blunthornapi.api.context.EntityActionContext;
 import net.wouterb.blunthornapi.api.context.ItemActionContext;
-import net.wouterb.blunthornapi.api.event.BlockBreakEvent;
-import net.wouterb.blunthornapi.api.event.BlockUseEvent;
-import net.wouterb.blunthornapi.api.event.EntityUseEvent;
-import net.wouterb.blunthornapi.api.event.ItemUseEvent;
+import net.wouterb.blunthornapi.api.event.*;
 import net.wouterb.blunthornapi.api.permission.LockType;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,6 +51,10 @@ public class RegisteredFabricEvents {
 
     public static ActionResult onUseBlock(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
         BlockPos blockPos = hitResult.getBlockPos();
+        if (player.isSneaking() && player.getStackInHand(hand).getItem() instanceof BlockItem) {
+            BlockActionContext blockActionContext = new BlockActionContext(world, player, blockPos, getBlockId(world, blockPos), LockType.PLACEMENT, hand);
+            return BlockPlaceEvent.emit(blockActionContext);
+        }
         BlockActionContext blockActionContext = new BlockActionContext(world, player, blockPos, getBlockId(world, blockPos), LockType.BLOCK_INTERACTION, hand);
         return BlockUseEvent.emit(blockActionContext);
     }
