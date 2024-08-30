@@ -1,13 +1,18 @@
 package net.wouterb.blunthornapi.core.event;
 
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -20,6 +25,8 @@ import net.wouterb.blunthornapi.api.context.ItemActionContext;
 import net.wouterb.blunthornapi.api.event.*;
 import net.wouterb.blunthornapi.api.permission.LockType;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Method;
 
 import static net.wouterb.blunthornapi.api.Util.getBlockId;
 
@@ -51,12 +58,23 @@ public class RegisteredFabricEvents {
 
     public static ActionResult onUseBlock(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
         BlockPos blockPos = hitResult.getBlockPos();
-        if (player.isSneaking() && player.getStackInHand(hand).getItem() instanceof BlockItem) {
-            BlockActionContext blockActionContext = new BlockActionContext(world, player, blockPos, getBlockId(world, blockPos), LockType.PLACEMENT, hand);
-            return BlockPlaceEvent.emit(blockActionContext);
-        }
+        Item itemInHand = player.getStackInHand(hand).getItem();
+        String itemInHandId = Registries.ITEM.getId(itemInHand).toString();
         BlockActionContext blockActionContext = new BlockActionContext(world, player, blockPos, getBlockId(world, blockPos), LockType.BLOCK_INTERACTION, hand);
-        return BlockUseEvent.emit(blockActionContext);
+        BlockActionContext blockPlaceActionContext = new BlockActionContext(world, player, blockPos, itemInHandId, LockType.PLACEMENT, hand);
+
+        Block block = Registries.BLOCK.get(new Identifier(blockActionContext.getBlockId()));
+
+        boolean isHeldItemPlaceable = player.getStackInHand(hand).getItem() instanceof BlockItem;
+        boolean isPlayerSneaking = player.isSneaking();
+
+        boolean shouldPlace = isHeldItemPlaceable && (isPlayerSneaking || !isBlockInteractable(block));
+
+        if (shouldPlace) {
+            return BlockPlaceEvent.emit(blockPlaceActionContext);
+        } else {
+            return BlockUseEvent.emit(blockActionContext);
+        }
     }
 
     public static ActionResult onAttackEntity(PlayerEntity player, World world, Hand hand, Entity entity, EntityHitResult hitResult) {
@@ -76,5 +94,15 @@ public class RegisteredFabricEvents {
         }
 
         return entityResult;
+    }
+
+    private static boolean isBlockInteractable(Block block) {
+        try {
+            Method superMethod = AbstractBlock.class.getDeclaredMethod("onUse", BlockState.class, World.class, BlockPos.class, PlayerEntity.class, Hand.class, BlockHitResult.class);
+            Method subMethod = block.getClass().getDeclaredMethod("onUse", BlockState.class, World.class, BlockPos.class, PlayerEntity.class, Hand.class, BlockHitResult.class);
+            return !superMethod.equals(subMethod);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
