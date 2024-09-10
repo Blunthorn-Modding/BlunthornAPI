@@ -9,13 +9,13 @@ import net.wouterb.blunthornapi.api.permission.LockType;
 public class ModTest implements IPersistentPlayerData {
     @Override
     public NbtCompound getDefaultValues() {
-        String[] lockedValues = {"minecraft:oak_button", "minecraft:oak_*", "#minecraft:leaves"};
+        String[] lockedValues = {"minecraft:elytra", "minecraft:diamond_chestplate"};
         NbtCompound nbtData = new NbtCompound();
         NbtList nbtList = new NbtList();
         for (String id : lockedValues) {
             nbtList.add(NbtString.of(id));
         }
-        nbtData.put(LockType.BLOCK_INTERACTION.toString(), nbtList);
+        nbtData.put(LockType.ITEM_USAGE.toString(), nbtList);
         return nbtData;
     }
 

@@ -138,6 +138,8 @@ public class BlunthornAPI implements ModInitializer {
 
 		ItemUseEvent.EVENT.register(itemActionContext -> {
 			ClientServerLogger.info("Item use event!", itemActionContext.isClient());
+			if (Permission.isObjectLocked(itemActionContext, "test"))
+				return ActionResult.FAIL;
 			return ActionResult.PASS;
 		});
 
