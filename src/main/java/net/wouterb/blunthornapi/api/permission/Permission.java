@@ -9,7 +9,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.wouterb.blunthornapi.api.config.BlunthornConfig;
 import net.wouterb.blunthornapi.api.config.ConfigManager;
 import net.wouterb.blunthornapi.api.context.ActionContext;
-import net.wouterb.blunthornapi.api.context.BlockActionContext;
 import net.wouterb.blunthornapi.core.data.IEntityDataSaver;
 import net.wouterb.blunthornapi.core.network.PermissionSyncHandler;
 
@@ -25,6 +24,8 @@ public class Permission {
      */
     public static boolean isObjectLocked(ActionContext context, String modId) {
         PlayerEntity player = context.getPlayer();
+
+        if (player.isSpectator()) return false;
 
         // Check for config bypass settings
         List<BlunthornConfig> configs = Collections.list(ConfigManager.getAllConfigs());
@@ -47,11 +48,6 @@ public class Permission {
                 if (context.isObjectInTag(tag)) {
                     return true;
                 }
-//                if (context instanceof BlockActionContext blockActionContext) {
-//                    if (blockActionContext.isObjectInTag(tag)) {
-//                        return true;
-//                    }
-//                }
             }
 
             // Check if object matches with any ID's containing the '*' wildcard
