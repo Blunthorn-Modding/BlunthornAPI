@@ -1,7 +1,9 @@
 package net.wouterb.blunthornapi.core.data;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.wouterb.blunthornapi.api.data.IPersistentPlayerData;
-import net.wouterb.blunthornapi.core.network.PermissionSyncHandler;
+import net.wouterb.blunthornapi.core.network.PermissionSyncHandlerClient;
 
 import java.util.*;
 
@@ -10,7 +12,9 @@ public class ModRegistries {
 
     public static void registerMod(String modId, IPersistentPlayerData modPersistentData) {
         registeredMods.put(modId, modPersistentData);
-        PermissionSyncHandler.registerPermissionPacket(modId);
+
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+            PermissionSyncHandlerClient.registerPermissionPacket(modId);
     }
 
     public static IPersistentPlayerData getModPersistentData(String modId) {

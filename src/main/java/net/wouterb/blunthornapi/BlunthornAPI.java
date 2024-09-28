@@ -5,11 +5,15 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
+import net.wouterb.blunthornapi.api.Util;
 import net.wouterb.blunthornapi.api.config.BlunthornConfig;
 import net.wouterb.blunthornapi.api.config.ConfigManager;
 import net.wouterb.blunthornapi.api.data.IPersistentPlayerData;
@@ -65,17 +69,23 @@ public class BlunthornAPI implements ModInitializer {
 				IPersistentPlayerData modPersistentData = ModRegistries.getModPersistentData(modId);
 				((IEntityDataSaver) player).blunthornapi$setDefaultValues(modPersistentData);
 			}
-			PermissionSyncHandler.updateAllClientPermissions(player);
-			ConfigSyncHandler.updateAllClientConfigs(player);
+
+			if (server.isSingleplayer() || server.isDedicated()) {
+				Util.updateAllClientPermissions(player);
+				Util.updateAllClientConfigs(player);
+			}
+
 		}
 	}
 
 	private static void onPlayerRespawn(ServerPlayerEntity oldPlayer, ServerPlayerEntity newPlayer, boolean alive) {
 		List<String> modIds = ModRegistries.getRegisteredModIds();
+		IEntityDataSaver oldDataSaver = (IEntityDataSaver) oldPlayer;
+		IEntityDataSaver newDataSaver = (IEntityDataSaver) newPlayer;
 
 		for (String modId : modIds) {
-			NbtCompound oldNbt = ((IEntityDataSaver) oldPlayer).blunthornapi$getPersistentData(modId);
-			((IEntityDataSaver) newPlayer).blunthornapi$addPersistentData(modId, oldNbt);
+			NbtCompound oldNbt = oldDataSaver.blunthornapi$getPersistentData(modId);
+			newDataSaver.blunthornapi$addPersistentData(modId, oldNbt);
 			PermissionSyncHandler.updateAllClientPermissions(newPlayer);
 		}
 	}

@@ -13,6 +13,15 @@ public class ConfigManager {
         return modConfigs.elements();
     }
 
+    public static ArrayList<String> getModConfigIds(String modId) {
+        ArrayList<String> configIds = new ArrayList<>();
+        for (String configId : Collections.list(modConfigs.keys())) {
+            if (configId.contains(modId))
+                configIds.add(configId);
+        }
+        return configIds;
+    }
+
     public static BlunthornConfig getConfig(String configId) {
         return modConfigs.get(configId);
     }

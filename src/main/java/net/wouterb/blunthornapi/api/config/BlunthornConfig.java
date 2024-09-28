@@ -3,7 +3,7 @@ package net.wouterb.blunthornapi.api.config;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.wouterb.blunthornapi.BlunthornAPI;
-import org.apache.commons.compress.utils.FileNameUtils;
+import net.wouterb.blunthornapi.api.Util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,7 +56,7 @@ public abstract class BlunthornConfig {
     }
 
     public String getConfigName() {
-        return FileNameUtils.getBaseName(filePath);
+        return Util.getBaseFileName(filePath);
     }
 
     public String getConfigId() {
