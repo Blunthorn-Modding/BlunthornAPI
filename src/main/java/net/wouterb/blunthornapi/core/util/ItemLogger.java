@@ -40,7 +40,7 @@ public class ItemLogger {
         if (client.player == null) return;
         if (!(client.currentScreen instanceof HandledScreen<?>)) return;
 
-        sendClickableMessage(client.player, "Logging: ", itemId);
+        sendClickableMessage(client.player, "Logging ID: ", itemId);
         appendItemIDToJsonFile(itemId);
     }
 

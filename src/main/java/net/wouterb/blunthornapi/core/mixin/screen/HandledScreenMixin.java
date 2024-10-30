@@ -36,7 +36,6 @@ public class HandledScreenMixin extends Screen {
         if (!this.client.player.isCreative()) return;
 
         String itemId = Registries.ITEM.getId(this.focusedSlot.getStack().getItem()).toString();
-        ItemLogger.sendClickableMessage(this.client.player, "Logging ID: ", itemId);
         ItemLogger.logItemId(this.client, itemId);
     }
 }

@@ -1,6 +1,7 @@
 package net.wouterb.blunthornapi;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.wouterb.blunthornapi.api.Util;
 import net.wouterb.blunthornapi.api.config.BlunthornConfig;
@@ -42,9 +44,6 @@ public class BlunthornAPI implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Starting Blunthorn API");
 		registerFabricEvents();
-//		registerTestConfig();
-//		setupTestLocks();
-//		registerTestEvents();
 	}
 
 	private static void registerFabricEvents() {
@@ -58,6 +57,17 @@ public class BlunthornAPI implements ModInitializer {
 
 		ServerPlayConnectionEvents.JOIN.register(BlunthornAPI::onPlayerJoin);
 		ServerPlayerEvents.AFTER_RESPAWN.register(BlunthornAPI::onPlayerRespawn);
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(BlunthornAPI::onPlayerWorldChange);
+	}
+
+	private static void onPlayerWorldChange(ServerPlayerEntity serverPlayer, ServerWorld origin, ServerWorld destination) {
+		MinecraftServer server = serverPlayer.getServer();
+		if (server == null) return;
+
+		if (server.isSingleplayer() || server.isDedicated()) {
+			Util.updateAllClientPermissions(serverPlayer);
+			Util.updateAllClientConfigs(serverPlayer);
+		}
 	}
 
 	private static void onPlayerJoin(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server){
@@ -88,85 +98,5 @@ public class BlunthornAPI implements ModInitializer {
 			newDataSaver.blunthornapi$addPersistentData(modId, oldNbt);
 			PermissionSyncHandler.updateAllClientPermissions(newPlayer);
 		}
-	}
-
-	static BlunthornConfig config;
-
-	public static void registerTestConfig() {
-		config = new ConfigTest();
-//		System.out.println(((ConfigTest)config).getTesting());
-//		System.out.println(((ConfigTest)config).getBooltest());
-		ConfigManager.registerConfig(config);
-	}
-
-	private static void setupTestLocks() {
-		registerMod("test", new ModTest());
-
-//		ServerPlayConnectionEvents.JOIN.register((serverPlayNetworkHandler, sender, server) -> {
-//			ServerPlayerEntity player = serverPlayNetworkHandler.getPlayer();
-//			((IEntityDataSaver) player).blunthornapi$setPersistentData("test", nbtData);
-//		});
-
-
-	}
-
-	private static void registerTestEvents() {
-		BlockBreakEvent.ATTACK.register(blockActionContext -> {
-			ClientServerLogger.info("Attack block event!", blockActionContext.isClient());
-			if (Permission.isObjectLocked(blockActionContext, "test"))
-				return ActionResult.FAIL;
-			return ActionResult.PASS;
-		});
-
-		BlockBreakEvent.BEFORE.register(blockActionContext -> {
-			ClientServerLogger.info("Before block break event!", blockActionContext.isClient());
-			if (Permission.isObjectLocked(blockActionContext, "test"))
-				return ActionResult.FAIL;
-			return ActionResult.PASS;
-		});
-
-		BlockBreakEvent.AFTER.register(blockActionContext -> {
-			ClientServerLogger.info("After block break event!", blockActionContext.isClient());
-			if (Permission.isObjectLocked(blockActionContext, "test"))
-				return ActionResult.FAIL;
-			return ActionResult.PASS;
-		});
-
-		BlockPlaceEvent.EVENT.register(blockActionContext -> {
-			ClientServerLogger.info("Block placement event!", blockActionContext.isClient());
-			if (Permission.isObjectLocked(blockActionContext, "test"))
-				return ActionResult.FAIL;
-			return ActionResult.PASS;
-		});
-
-		BlockUseEvent.EVENT.register(blockActionContext -> {
-			ClientServerLogger.info("Block use event!", blockActionContext.isClient());
-			if (Permission.isObjectLocked(blockActionContext, "test"))
-				return ActionResult.FAIL;
-			return ActionResult.PASS;
-		});
-
-		ItemUseEvent.EVENT.register(itemActionContext -> {
-			ClientServerLogger.info("Item use event!", itemActionContext.isClient());
-			if (Permission.isObjectLocked(itemActionContext, "test"))
-				return ActionResult.FAIL;
-			return ActionResult.PASS;
-		});
-
-		EntityUseEvent.EVENT.register(entityActionContext -> {
-			ClientServerLogger.info("Entity use event!", entityActionContext.isClient());
-			return ActionResult.PASS;
-		});
-
-		ObjectCraftedEvent.EVENT.register(itemActionContext -> {
-			ClientServerLogger.info("Object crafted event!", itemActionContext.isClient());
-			return ActionResult.PASS;
-		});
-
-		EntityItemDropEvent.EVENT.register(entityActionContext -> {
-			ClientServerLogger.info("Entity item drop event!", entityActionContext.isClient());
-			return ActionResult.PASS;
-		});
-
 	}
 }

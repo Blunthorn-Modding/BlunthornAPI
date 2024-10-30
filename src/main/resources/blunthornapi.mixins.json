@@ -8,6 +8,7 @@
     "crafting.SmithingScreenHandlerMixin",
     "data.EntityDataSaver",
     "drop.LivingEntityMixin",
+    "entity.EndermanEntityMixin",
     "item.ArmorItemMixin",
     "item.AxeItemMixin",
     "item.EquipmentMixin",
